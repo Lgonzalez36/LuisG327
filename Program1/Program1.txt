@@ -1,0 +1,54 @@
+Linked List Library
+
+Create a singly linked list in C.
+
+The linked list should store arbitrary data types using a void * pointer.
+The list indexes are 0 based.
+
+Functions to implement that represent the public interface are listed below. These
+are the only functions that should be used by other programs. Programs using
+the linked list should not access or manipulate internal data. All access should
+be via the functions listed below.
+
+
+// Append the element at the end of the list
+    void list_append(void *element)
+
+
+// Append the element at a particular location.
+// If location is beyond the end of the list, append the item at the end of the list
+// Returns the location of the new element.
+    unsigned int list_insert_at(void *element, unsigned int location)
+
+
+// Remove the element at location from the list
+// Returns a pointer to the element removed, null if there is no element at that location
+    void *list_remove_at(unsigned int location)
+
+
+// Remove the element from the list
+// Returns a pointer to the element removed, null if there is no element at that location
+    void list_remove(void *element)
+
+
+// Returns the list of element pointers as an array
+    void *list_to_array()
+
+
+// Returns the number of elements in the list.
+    unsigned int list_size()
+
+
+// Returns true if empty, false otherwise.
+    bool list_is_empty()
+
+
+Write a program that links to the linked list library and
+tests all the functions. Write test functions for each test
+case. The test functions should be called from the main
+function. The results of each test should be written to stdout.
+
+Create a Makefile to:
+    1. compile the library without creating an executable file (i.e.do not execute the link step)
+
+    2. compile the test program that links to the linked list object code
