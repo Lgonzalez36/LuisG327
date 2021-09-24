@@ -24,13 +24,13 @@
         - what doesnt work 
             - scanf() doesnt work with digits 10 +
             - I havent had the change to test out all the test cases
-            - still need to implement error checking
+            - when you insert it inserts a diff num ex insert 9 -> value changes to 57??
 
     2) char linked list
         - what works
             - initualizing the linked list
             - apending the list with init user input
-                - insert at a location
+            - insert at a location
             - remove at a location
             - convert to int *arr[]
             - printing the list
@@ -38,7 +38,6 @@
             - checking if empty
 
         - what doesnt work
-            - insert at a location
             - remove from location works, but didn't have the chance to error
                 - check for expections
 
@@ -46,7 +45,7 @@
         - what works
             - initualizing the linked list
             - apending the list with init user input
-                - insert at a location
+            - insert at a location
             - remove at a location
             - convert to int *arr[]
             - printing the list
@@ -54,7 +53,7 @@
             - checking if empty
 
         - what doesnt work
-            - insert at a location
+            - inserting to the right location works, but all floats are 0.00 when inserted
             - remove from location works, but didn't have the chance to error
                 - check for expections
 
@@ -90,4 +89,6 @@ Note: See our coding guidelines, etc
     - the other issues i encountered are more easily fixable
     - for the float and chars i will need a to distingush their data type
     - in the remove_ at() and insert at () which i have an idea for but didnt have the time
-    
+    - inserting is the biggest bug. I cant figure out why values change after i insert it
+    - i didnt know what to do with remove() remove at loc works just fine
+    - wasnt sure what to do with that

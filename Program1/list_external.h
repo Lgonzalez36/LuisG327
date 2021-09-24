@@ -30,7 +30,7 @@ void *list_append(list_type *list, void *element);
 // Append the element at a particular location.
 // If location is beyond the end of the list, append the item at the end of the list
 // Returns the location of the new element.
-void *list_insert_at(list_type *list);
+void *list_insert_at(list_type *list, int type);
 
 // Remove the element at location from the list
 // Returns a pointer to the element removed, null if there is no element at that location

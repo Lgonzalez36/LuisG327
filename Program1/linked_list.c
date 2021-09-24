@@ -16,13 +16,6 @@
 #include <string.h>
 
 /*
- *
- *
- * 
- *
-*/
-
-/*
  * Main ()
  * starts by printing the main menu and asking user to make a selection
 */
@@ -43,7 +36,7 @@ int main(void) {
                 for (int i=0; i<n; i++) {
                     void *data;
                     printf("Enter data number: %d\n", i+1);
-                    scanf("%p",&data);
+                    scanf("%d",&data);
                     list_append(&LIST, &data);
                 }
 
@@ -59,7 +52,7 @@ int main(void) {
                     print_menu2();
                     scanf("%d",&iChoice2);
                     if (iChoice2 == 1) {   // 1: Insert at a specific location WORKING
-                        list_insert_at(&LIST);
+                        list_insert_at(&LIST, 0);
                         print_list(&LIST, iterate_int);
                     }
                     else if (iChoice2 == 2) {   // 2: Remove element from location WORKING
@@ -118,7 +111,7 @@ int main(void) {
                     print_menu2();
                     scanf("%d",&iChoice2);
                     if (iChoice2 == 1) {   // 1: Insert at a specific location NOT WORKING
-                        list_insert_at(&LIST);
+                        list_insert_at(&LIST, 1);
                         print_list(&LIST, iterate_string); 
                     }
                     else if (iChoice2 == 2) {   // 2: Remove element from location WORKING
@@ -167,7 +160,7 @@ int main(void) {
                     print_menu2();
                     scanf("%d",&iChoice2);
                     if (iChoice2 == 1) {   // 1: Insert at a specific location NOT WORKING
-                        list_insert_at(&LIST);
+                        list_insert_at(&LIST, 2);
                         print_list(&LIST, iterate_float);
                     }
                     else if (iChoice2 == 2) {   // 2: Remove element from location WORKING
