@@ -1,20 +1,29 @@
-What is the host name?
-    - 
-What is the CPU type and model?
-    - 
-What version of the Linux kernel is being used?
-    - 
-How long (in days, hours, and minutes) has it been since the system was last booted?
-    - 
-How much of the total CPU time has been spend executing in user mode, system mode and idle?
-    - 
-How much memory is configured for it?
-    - 
-How much memory is currently available on it?
-    - 
-How many disk read/write requests have been made?
-    - 
-How many context switches has the kernel performed?
-    - 
-How many processes have been created sine the system was booted?
-    - 
+1)  What is the host name?
+        - $ cat /proc/sys/kernel/hostname
+
+2)  What is the CPU type and model?
+        - $ cat /proc/cpuinfo
+
+3)  What version of the Linux kernel is being used?
+        - $ cat /proc/version
+
+4)  How long (in days, hours, and minutes) has it been since the system was last booted?
+        - $ awk '{print int($1/86400)"days "int($1%86400/3600)":"int(($1%3600)/60)":"int($1%60)}' /proc/uptime
+
+5)  How much of the total CPU time has been spend executing in user mode, system mode and idle?
+        - $ cat 
+
+6)  How much memory is configured for it?
+        - $ cat 
+
+7)  How much memory is currently available on it?
+        - $ cat 
+
+8)  How many disk read/write requests have been made?
+        - $ cat 
+
+9)  How many context switches has the kernel performed?
+        - $ cat 
+
+10) How many processes have been created sine the system was booted?
+        - $ cat 
