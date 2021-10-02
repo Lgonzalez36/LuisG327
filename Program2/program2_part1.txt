@@ -1,0 +1,20 @@
+What is the host name?
+    - 
+What is the CPU type and model?
+    - 
+What version of the Linux kernel is being used?
+    - 
+How long (in days, hours, and minutes) has it been since the system was last booted?
+    - 
+How much of the total CPU time has been spend executing in user mode, system mode and idle?
+    - 
+How much memory is configured for it?
+    - 
+How much memory is currently available on it?
+    - 
+How many disk read/write requests have been made?
+    - 
+How many context switches has the kernel performed?
+    - 
+How many processes have been created sine the system was booted?
+    - 
