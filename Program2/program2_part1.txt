@@ -11,19 +11,19 @@
         - $ awk '{print int($1/86400)"days "int($1%86400/3600)":"int(($1%3600)/60)":"int($1%60)}' /proc/uptime
 
 5)  How much of the total CPU time has been spend executing in user mode, system mode and idle?
-        - $ cat 
+        - $ cat /proc/stat
 
 6)  How much memory is configured for it?
-        - $ cat 
+        - $ grep MemTotal /proc/meminfo
 
 7)  How much memory is currently available on it?
-        - $ cat 
-
+        - $ grep MemAvailable /proc/meminfo
+ 
 8)  How many disk read/write requests have been made?
-        - $ cat 
+        - $ cat /proc/[pid]/io
 
 9)  How many context switches has the kernel performed?
-        - $ cat 
+        - $ grep voluntary /proc/$$/status
 
 10) How many processes have been created sine the system was booted?
-        - $ cat 
+        - $ grep processes /proc/stat
