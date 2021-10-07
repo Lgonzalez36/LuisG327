@@ -2,13 +2,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <limits.h>
+#include <sys/types.h>
+#include <sys/param.h>
 
 int main() {
     // char TABSPACE[] = "\t\t";
     char hostname[HOST_NAME_MAX + 1];
     gethostname(hostname, HOST_NAME_MAX + 1);
     printf("_________________________________________________________________________\n\n");
-    printf("System information\n\n\n\n");
+    printf("\n\t\t\tSystem information\n\n");
     printf("_________________________________________________________________________\n");
     printf("Hostname: %s\t\t\t\n", hostname);
     printf("_________________________________________________________________________\n");
@@ -19,9 +21,10 @@ int main() {
     system("cat /proc/version");
     printf("_________________________________________________________________________\n");
     printf("Time since last booted: \n");
-    // system("awk '{print int($1/86400)'", "days", "int($1%86400/3600)", ":", "int(($1%3600)/60)" ":", "int($1%60)}' /proc/uptime");
+    system("tuptime -o u -l");
     printf("_________________________________________________________________________\n");
-    printf("CPU time spent in \n");
+    printf("CPU time spent in 1/1000 of a second \n");
+    printf("%s%s%s%s\n", "      User", "  Nice", " System", " Idle");
     system("cat /proc/stat | grep cpu");
     printf("_________________________________________________________________________\n");
     printf("Amount of memory configured: \n");
@@ -30,10 +33,9 @@ int main() {
     printf("Amount of memory avaiable: \n");
     system("grep MemAvailable /proc/meminfo");
     printf("_________________________________________________________________________\n");
-    // have to find out how to find current pid 
-    int p_pid = getpid();
     printf("Number of disk I/O request: \n");
-    printf("cat /proc/%d/io\n", p_pid);
+    char str[24] = "cat /proc/$$/io";
+    system(str);
     printf("_________________________________________________________________________\n");
     printf("Number of context switched: \n");
     system("grep voluntary /proc/$$/status");
