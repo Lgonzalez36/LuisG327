@@ -6,13 +6,11 @@
 #include <sys/param.h>
 
 int main() {
-    // char TABSPACE[] = "\t\t";
-    char hostname[HOST_NAME_MAX + 1];
-    gethostname(hostname, HOST_NAME_MAX + 1);
     printf("_________________________________________________________________________\n\n");
     printf("\n\t\t\tSystem information\n\n");
     printf("_________________________________________________________________________\n");
-    printf("Hostname: %s\t\t\t\n", hostname);
+    printf("Hostname: \n");
+    system("cat /proc/sys/kernel/hostname");
     printf("_________________________________________________________________________\n");
     system("cat /proc/cpuinfo | grep -m 1 family");
     system("cat /proc/cpuinfo | grep -m 1 name");
@@ -34,8 +32,7 @@ int main() {
     system("grep MemAvailable /proc/meminfo");
     printf("_________________________________________________________________________\n");
     printf("Number of disk I/O request: \n");
-    char str[24] = "cat /proc/$$/io";
-    system(str);
+    system("cat /proc/$$/io");
     printf("_________________________________________________________________________\n");
     printf("Number of context switched: \n");
     system("grep voluntary /proc/$$/status");
