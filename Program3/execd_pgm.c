@@ -13,22 +13,26 @@ int main(int argc, char **argv)
 {
 	int i;
 
-	// if (argc < 2 || argc > 3) {
-	// 	fprintf(stderr, "Usage: %s {successor_name}"
-	// 			" [do-it-right-param]\n", argv[0]);
-	// 	exit(EXIT_FAILURE);
-	// }
-    printf("\n\n____________________________________________________________\n\n");
+	if (argc < 1 ) {
+		fprintf(stderr, "Usage: %s {successor_name}"
+				" [do-it-right-param]\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
     system("ps");
-    printf("\n\n____________________________________________________________\n\n");
+    printf("\n\n____________________________________________________________\n");
+    printf("List of arguments \n");
 	for (i=0; i<argc; i++)
-		printf("argv[%d]=%s\n", i, argv[i]);
+		printf("argv[%d]:\t%s\n", i, argv[i]);
 
-	if (argc > 1) { /* the "do-it-right" case! */
-        putenv(argv[0]);
-        putenv(argv[1]);
-        putenv(argv[2]);
-        putenv(argv[3]);
+	if (argc > 1 ) {/* the "do-it-right" case! */
+        for (i=0; i<argc; i++)
+            putenv(argv[i]);
+
+        printf("\nList of variables \n");
+        system("printenv PATH");
+        system("printenv SHELL");
+        system("printenv HOME");
+        system("printenv PWD");
         system("printenv EXECD_PGM_NAME");
         system("printenv TEST1");
         system("printenv TEST2");
@@ -44,9 +48,9 @@ int main(int argc, char **argv)
 			" via the argv[0] passed to execl [Wrong]\n",
 			argv[0], argv[1]);
 	}
-    printf("\n\n____________________________________________________________\n\n");
+    printf("\n\n____________________________________________________________\n");
     system("ps");
-    printf("\n\n____________________________________________________________\n\n");
+    printf("\n____________________________________________________________\n");
 
 
 	exit (EXIT_SUCCESS);
