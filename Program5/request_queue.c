@@ -1,11 +1,10 @@
 #include "request_queue.h"
-#include "../common.h"
+#include "common.h"
 
 struct request_queue* create_request_queue(pthread_mutex_t* p_mutex, pthread_cond_t* p_cond_var) {
     struct request_queue* req_queue = malloc(sizeof(struct request_queue));
     if (req_queue ==  NULL){
-        perror("Create_request_queue");
-        exit(EXIT_FAILURE);
+        handle_error("Create_request_queue");
     }
     req_queue->mutex = p_mutex;
     req_queue->cond_var = p_cond_var;
@@ -16,7 +15,33 @@ struct request_queue* create_request_queue(pthread_mutex_t* p_mutex, pthread_con
     return req_queue;
 }
 
+/* add a request to the requests list */
 void add_request(struct request_queue* req_queue, int request_num) {
+    int rc = pthread_mutex_lock(req_queue->mutex);
+    if (rc) {
+        handle_error_en(rc, "muttex lock in add_request line 28\n");
+    }
+    struct request* a_request = (struct request*)malloc(sizeof(struct request));
+    if (!a_request) { /* malloc failed?? */
+	    handle_error_en(-500, "add_request: out of memory\n");
+    }
+
+    a_request->number = request_num;
+    a_request->next = NULL;
+    if (request_num == 0){
+        req_queue->request_list = a_request;
+        req_queue->last_request = a_request;
+        req_queue->num_requests = 1;
+    }
+    else {
+        req_queue->last_request->next = a_request;
+        req_queue->last_request = a_request;
+        req_queue->num_requests++;
+    }
+    printf("add_request: added request with id '%d'\n", a_request->number);
+    fflush(stdout);
+    pthread_mutex_unlock(req_queue->mutex);
+    pthread_cond_signal(req_queue->cond_var);
 }
 
 /*
@@ -26,21 +51,36 @@ void add_request(struct request_queue* req_queue, int request_num) {
  * The receiver must free the request to release its memory.
  */
 struct request* get_request(struct request_queue* req_queue) {
-
-    return NULL;
+    struct request* get_a_request;
+    if (req_queue->num_requests > 0) {
+        get_a_request = req_queue->request_list;
+        req_queue->request_list = get_a_request->next;
+        if (req_queue->request_list == NULL){
+            req_queue->last_request  = NULL;
+        }
+        req_queue->num_requests--;
+    }
+    else {
+        get_a_request = NULL;
+    }
+    return get_a_request;
 }
 
+/* returns the number of pending requests in the queue */
 int get_pending_request_count(struct request_queue* req_queue) {
     return 0;
 }
 
+/* free any resources used by request queue */
 void delete_request_queue(struct request_queue* req_queue) {
 }
 
+/* close the queue as it is no longer accepting requests */
 void close_request_queue(struct request_queue* req_queue) {
     free(req_queue);
 }
 
+/* returns true if the request queue is closed */
 bool is_request_queue_closed(struct request_queue* req_queue) {
     return false;
 }

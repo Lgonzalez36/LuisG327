@@ -13,6 +13,7 @@
  */
 struct worker_thread {
     int thread_id;               // thread id - a sequentially assigned number
+    int total_processed;
     pthread_t thread;            // thread identifier returned by pthread_create
     struct worker_thread* next;  // next worker thread
 };

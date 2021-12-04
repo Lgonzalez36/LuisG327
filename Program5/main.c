@@ -8,6 +8,7 @@
 #include <error.h>
 #include "request_queue.h"
 #include "worker_thread_pool.h"
+#include "common.h"
 
 static void nap_random();
 
@@ -20,14 +21,14 @@ int main(int argc, char* argv[]) {
     srand(time(0));
 
     if (pthread_condattr_init(&condattr)){
-        // handle_error("pthread_condattr_init");
-        perror("pthread_cond_init");
-        exit(EXIT_FAILURE);
+        handle_error("pthread_condattr_init");
+        // perror("pthread_cond_init");
+        // exit(EXIT_FAILURE);
     }
     if (pthread_cond_init(&req_cond, &condattr)){
-        // handle_error("thread_cond");
-        perror("pthread_cond");
-        exit(EXIT_FAILURE);
+        handle_error("thread_cond");
+        // perror("pthread_cond");
+        // exit(EXIT_FAILURE);
     }
 
     pthread_condattr_destroy(&condattr);
@@ -42,8 +43,14 @@ int main(int argc, char* argv[]) {
     for (int i=0; i < 4; i++){
         printf("main: creating thread #%d ...\n", i);
         add_worker_thread(thread_pool);
-    
     }
+
+    int number = 0;
+    while(number < 201){
+        add_request(req_queue, number++);
+        nap_random();
+    }
+
     close_request_queue(req_queue);
     delete_worker_thread_pool(thread_pool);
     delete_request_queue(req_queue);
@@ -66,3 +73,19 @@ int main(int argc, char* argv[]) {
     nanosleep(&sleep_time, NULL);
     exit(EXIT_SUCCESS);
 }
+
+    // init mutex
+    // init condition variable
+    // create request queue
+    // create worker thread pool
+    // init thread pool with worker threads
+
+    // Loop: generate requests in a for loop up to argv[1] count
+    //   arg[1] == -1 no upper limit?
+    //   sleep periodically to allow threads to service requests
+    //   use nanosleep()
+    //   check thresholds to add/remove thread
+    // close the request queue to notify threads that no more work
+    // needs to be done.
+    // delete the thread pool
+    // delete the request queue

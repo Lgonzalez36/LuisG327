@@ -8,13 +8,13 @@
 #define handle_error_en(en, msg) \
     do {                         \
         errno = en;              \
-        perror(msgs);            \
+        perror(msg);             \
         exit(EXIT_FAILURE);      \
     } while (0)
 
 #define handle_error(msg)        \
     do {                         \
-        perror(msgs);            \
+        perror(msg);             \
         exit(EXIT_FAILURE);      \
     } while (0)
 

@@ -1,10 +1,11 @@
 {
+  "version": "0.2.0",
   "configurations": [
     {
-      "name": "(gdb) Launch",
+      "name": "(gdb) Launch request_server",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${fileDirname}/request_server",
+      "program": "/home/lagonzalez/Documents/LuisG327/Program5/request_server",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${fileDirname}",
@@ -12,11 +13,16 @@
       "externalConsole": false,
       "MIMode": "gdb",
       "setupCommands": [
-        {
-          "description": "Enable pretty-printing for gdb",
-          "text": "-enable-pretty-printing",
-          "ignoreFailures": true
-        }
+          {
+              "description": "Enable pretty-printing for gdb",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+          },
+          {
+              "description":  "Set Disassembly Flavor to Intel",
+              "text": "-gdb-set disassembly-flavor intel",
+              "ignoreFailures": true
+          }
       ]
     },
     {

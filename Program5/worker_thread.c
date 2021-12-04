@@ -2,6 +2,7 @@
 #include <string.h>
 #include "common.h"
 #include "request_queue.h"
+#include <stdbool.h>
 
 static bool is_prime(int n);
 static void process_request(struct request* request, int thread_id);
@@ -14,7 +15,10 @@ static void process_request(struct request* request, int thread_id) {
         fflush(stdout);
         // Should really do some real work here - so find some primes
         for (int i = 1; i < 10001; ++i) {
-            is_prime(i);
+            if (is_prime(i)) {
+                printf("%d:\t%s", i, "True\n");
+                printf("thread-%d processed request [%d]\n", thread_id, request->number);
+            }
         }
     }
 
@@ -29,9 +33,10 @@ static bool is_prime(int n) {
     for (int i = 2; i <= n / 2; ++i) {
         if (n % i == 0) {
             prime = false;
-            break;
+            return prime;
         }
     }
+    return prime;
 }
 
 /*
@@ -45,5 +50,16 @@ static bool is_prime(int n) {
  * Exit the thread when the request queue is closed.
  */
 void* do_work(void* thread_params) {
-    return NULL;
+    while (1) {
+        struct worker_thread_params *paramss = (struct worker_thread_params *) thread_params;
+        int taskCount = 200;
+        pthread_mutex_lock(paramss->req_queue->mutex);
+        while (taskCount == 0) {
+            pthread_cond_wait(paramss->req_queue->cond_var, paramss->req_queue->mutex);
+        }
+        taskCount--;
+        struct request* get_a_request = get_request(paramss->req_queue);
+        pthread_mutex_unlock(paramss->req_queue->mutex);
+        process_request(get_a_request, paramss->thread_id);
+    }
 }

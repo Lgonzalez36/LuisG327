@@ -3,7 +3,7 @@ CC = gcc
 LINKER = gcc
 
 # compiler/linker flags
-CC_FLAGS = -Wall -Wextra -g -DDEBUG
+CC_FLAGS = -g -Wall 
 LINKER_FLAGS = -g
 
 # files removal
