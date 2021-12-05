@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "common.h"
+#include <pthread.h>
 
 static int next_thread_id = 0;
 static pthread_t start_worker_thread(struct worker_thread_params* params);
@@ -45,7 +46,10 @@ void add_worker_thread(struct worker_thread_pool* pool) {
     pool->thread_list = worker;
     pool->num_threads += 1;
     pool->last_thread_id = worker->thread_id;
-
+    
+    params->worker_thd = worker->next;
+    
+    params->total_processed = 0;
     params->req_queue = pool->req_queue;
     params->thread_id = worker->thread_id;
     worker->thread = start_worker_thread(params);

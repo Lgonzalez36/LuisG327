@@ -9,6 +9,8 @@
 #include "request_queue.h"
 #include "worker_thread_pool.h"
 #include "common.h"
+#include <assert.h>
+#include <unistd.h>
 
 static void nap_random();
 
@@ -40,22 +42,34 @@ int main(int argc, char* argv[]) {
         create_worker_thread_pool(req_queue);
 
     printf("Creating workers\n");
-    for (int i=0; i < 2; i++){
+    for (int i=0; i < 4; i++){
         printf("IN MAIN: creating THREAD [%d] ...\n", i+1);
         add_worker_thread(thread_pool);
     }
 
     int number = 1;
     while(number < 201){
-        if (number == 200 ) printf("need to stop here\n");
+        if (number == 200 ) req_queue->is_closed = true;
         add_request(req_queue, number);
         number++;
-        //nap_random();
     }
-        if (pthread_join(thread_pool->thread_list->thread, NULL) != 0) {
-            perror("Failed to join the thread");
-        }
-    printf("\n________________________________________________\n");
+    
+    int i = 0;
+    //while ( i < 3 ) {
+        //if (thread_pool->thread_list == NULL) break;
+        int result_code1 = pthread_join(thread_pool->thread_list->thread, NULL);
+        int result_code2 = pthread_join(thread_pool->thread_list->next->thread, NULL);
+        int result_code3 = pthread_join(thread_pool->thread_list->next->next->thread, NULL);
+        int result_code4 = pthread_join(thread_pool->thread_list->next->next->next->thread, NULL);
+        //thread_pool->thread_list->thread = thread_pool->thread_list->next->thread;
+        i++;
+        assert(!result_code1);
+        assert(!result_code2);
+        assert(!result_code3);
+        assert(!result_code4);
+        printf("IN MAIN: Thread %d has ended.\n", i);
+    //}
+    
     close_request_queue(req_queue);
     delete_worker_thread_pool(thread_pool);
     delete_request_queue(req_queue);
@@ -68,7 +82,7 @@ static void nap_random() {
     sleep_time.tv_sec = 0;
     // Generate a value between 0 and 1 second
     // 1,000,000,000 ns = 1000 milliseconds
-    sleep_time.tv_nsec = rand() % (1000000000L / 4L);
+    sleep_time.tv_nsec = rand() % (1000000000L / 8L);
 
     // 1,000,000 ns = 1 ms
     fprintf(stderr, "IN MAIN: sleeping for %ld nanoseconds (%ld milliseconds).\n",
@@ -77,19 +91,3 @@ static void nap_random() {
     nanosleep(&sleep_time, NULL);
     exit(EXIT_SUCCESS);
 }
-
-    // init mutex
-    // init condition variable
-    // create request queue
-    // create worker thread pool
-    // init thread pool with worker threads
-
-    // Loop: generate requests in a for loop up to argv[1] count
-    //   arg[1] == -1 no upper limit?
-    //   sleep periodically to allow threads to service requests
-    //   use nanosleep()
-    //   check thresholds to add/remove thread
-    // close the request queue to notify threads that no more work
-    // needs to be done.
-    // delete the thread pool
-    // delete the request queue

@@ -1,5 +1,6 @@
 #include "request_queue.h"
 #include "common.h"
+#include <unistd.h>
 
 struct request_queue* create_request_queue(pthread_mutex_t* p_mutex, pthread_cond_t* p_cond_var) {
     struct request_queue* req_queue = malloc(sizeof(struct request_queue));
@@ -38,10 +39,9 @@ void add_request(struct request_queue* req_queue, int request_num) {
         req_queue->last_request = a_request;
         req_queue->num_requests++;
     }
-    printf("\t\tTASK [%d]:\t Added to the queue\n", request_num);
+    //printf("\t\tTASK [%d]:\t Added to the queue\n", request_num);
     pthread_cond_signal(req_queue->cond_var);
     pthread_mutex_unlock(req_queue->mutex);
-    
 }
 
 /*
@@ -52,21 +52,22 @@ void add_request(struct request_queue* req_queue, int request_num) {
  */
 struct request* get_request(struct request_queue* req_queue) {
     struct request* get_a_request = (struct request*)malloc(sizeof(struct request));
-    if (req_queue->num_requests > 0) {
-        get_a_request = req_queue->request_list;
-        req_queue->request_list = get_a_request->next;
-        if (req_queue->request_list == NULL){
-            req_queue->last_request  = NULL;
+    while (1) {
+        if (req_queue->num_requests == 0) {
+            //printf("WAITING:\tTASK [%d]\n", get_a_request->number);
+            sleep(1);
         }
-        req_queue->num_requests--;
+        if (req_queue->num_requests > 0) {
+            get_a_request = req_queue->request_list;
+            req_queue->request_list = get_a_request->next;
+            if (req_queue->request_list == NULL){
+                req_queue->last_request  = NULL;
+            }
+            req_queue->num_requests--;
+            //printf("TASK   [%d]:\t\t\t Removed from the queue\n", get_a_request->number);
+            return get_a_request;            
+        }
     }
-    else {
-        printf("\t\tTASK [%d]:\t Removed from the queue\n", get_a_request->number);
-        get_a_request = NULL;
-        exit(0);
-    }
-    printf("\t\tTASK [%d]:\t Removed from the queue\n", get_a_request->number);
-    return get_a_request;
 }
 
 /* returns the number of pending requests in the queue */
