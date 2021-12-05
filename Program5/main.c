@@ -40,36 +40,40 @@ int main(int argc, char* argv[]) {
         create_worker_thread_pool(req_queue);
 
     printf("Creating workers\n");
-    for (int i=0; i < 4; i++){
-        printf("main: creating thread #%d ...\n", i);
+    for (int i=0; i < 2; i++){
+        printf("IN MAIN: creating THREAD [%d] ...\n", i+1);
         add_worker_thread(thread_pool);
     }
 
-    int number = 0;
+    int number = 1;
     while(number < 201){
-        add_request(req_queue, number++);
-        nap_random();
+        if (number == 200 ) printf("need to stop here\n");
+        add_request(req_queue, number);
+        number++;
+        //nap_random();
     }
-
+        if (pthread_join(thread_pool->thread_list->thread, NULL) != 0) {
+            perror("Failed to join the thread");
+        }
+    printf("\n________________________________________________\n");
     close_request_queue(req_queue);
     delete_worker_thread_pool(thread_pool);
     delete_request_queue(req_queue);
 
     pthread_exit((void*)0);
-    
 }
 
-    static void nap_random() {
+static void nap_random() {
     struct timespec sleep_time;
     sleep_time.tv_sec = 0;
     // Generate a value between 0 and 1 second
     // 1,000,000,000 ns = 1000 milliseconds
     sleep_time.tv_nsec = rand() % (1000000000L / 4L);
-#ifdef DEBUG
+
     // 1,000,000 ns = 1 ms
-    fprintf(stderr, "main: sleeping for %ld nanoseconds (%ld milliseconds).\n",
+    fprintf(stderr, "IN MAIN: sleeping for %ld nanoseconds (%ld milliseconds).\n",
             sleep_time.tv_nsec, sleep_time.tv_nsec / 1000000L);
-#endif
+
     nanosleep(&sleep_time, NULL);
     exit(EXIT_SUCCESS);
 }

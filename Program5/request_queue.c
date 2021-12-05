@@ -28,7 +28,7 @@ void add_request(struct request_queue* req_queue, int request_num) {
 
     a_request->number = request_num;
     a_request->next = NULL;
-    if (request_num == 0){
+    if (request_num == 1){
         req_queue->request_list = a_request;
         req_queue->last_request = a_request;
         req_queue->num_requests = 1;
@@ -38,10 +38,10 @@ void add_request(struct request_queue* req_queue, int request_num) {
         req_queue->last_request = a_request;
         req_queue->num_requests++;
     }
-    printf("add_request: added request with id '%d'\n", a_request->number);
-    fflush(stdout);
-    pthread_mutex_unlock(req_queue->mutex);
+    printf("\t\tTASK [%d]:\t Added to the queue\n", request_num);
     pthread_cond_signal(req_queue->cond_var);
+    pthread_mutex_unlock(req_queue->mutex);
+    
 }
 
 /*
@@ -51,7 +51,7 @@ void add_request(struct request_queue* req_queue, int request_num) {
  * The receiver must free the request to release its memory.
  */
 struct request* get_request(struct request_queue* req_queue) {
-    struct request* get_a_request;
+    struct request* get_a_request = (struct request*)malloc(sizeof(struct request));
     if (req_queue->num_requests > 0) {
         get_a_request = req_queue->request_list;
         req_queue->request_list = get_a_request->next;
@@ -61,8 +61,11 @@ struct request* get_request(struct request_queue* req_queue) {
         req_queue->num_requests--;
     }
     else {
+        printf("\t\tTASK [%d]:\t Removed from the queue\n", get_a_request->number);
         get_a_request = NULL;
+        exit(0);
     }
+    printf("\t\tTASK [%d]:\t Removed from the queue\n", get_a_request->number);
     return get_a_request;
 }
 

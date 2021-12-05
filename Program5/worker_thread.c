@@ -11,15 +11,16 @@ static void process_request(struct request* request, int thread_id);
  * Processes one request.
  */
 static void process_request(struct request* request, int thread_id) {
-    if (request) {
+    if (request != NULL) {
+        printf("THREAD [%d] processing TASK [%d]\t\n", thread_id, request->number);
         fflush(stdout);
         // Should really do some real work here - so find some primes
         for (int i = 1; i < 10001; ++i) {
-            if (is_prime(i)) {
-                printf("%d:\t%s", i, "True\n");
-                printf("thread-%d processed request [%d]\n", thread_id, request->number);
-            }
+            is_prime(i);
+
         }
+        printf("THREAD [%d] Ended TASK[%d]\t\n\n", thread_id, request->number);
+
     }
 
 #ifdef DEBUG
