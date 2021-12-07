@@ -9,7 +9,6 @@ struct worker_thread_params {
     int thread_id;
     int total_processed;
     struct request_queue* req_queue;
-    struct worker_thread* worker_thd;
 };
 
 /*

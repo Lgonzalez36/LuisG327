@@ -16,6 +16,7 @@ struct worker_thread {
     int total_processed;
     pthread_t thread;            // thread identifier returned by pthread_create
     struct worker_thread* next;  // next worker thread
+    struct worker_thread_params* thd_params;
 };
 
 struct worker_thread_pool {
@@ -36,11 +37,11 @@ extern struct worker_thread_pool* create_worker_thread_pool(
 /* Adds a new worker thread to thread pool */
 extern void add_worker_thread(struct worker_thread_pool* pool);
 
-/* Removes the first worker thread from the thread pool */
-extern void remove_worker_thread(struct worker_thread_pool* pool);
+/* Removes the first worker thread from the thread pool 
+extern void remove_worker_thread(struct worker_thread_pool* pool);*/
 
-/* Gets current count of worker threads in thread pool */
-extern int get_worker_thread_count(struct worker_thread_pool* pool);
+/* Gets current count of worker threads in thread pool 
+extern int get_worker_thread_count(struct worker_thread_pool* pool);*/
 
 /* Performs resource clean up and cancel all worker threads. */
 extern void delete_worker_thread_pool(struct worker_thread_pool* pool);

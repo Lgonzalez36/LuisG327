@@ -42,6 +42,7 @@ void add_request(struct request_queue* req_queue, int request_num) {
     //printf("\t\tTASK [%d]:\t Added to the queue\n", request_num);
     pthread_cond_signal(req_queue->cond_var);
     pthread_mutex_unlock(req_queue->mutex);
+    
 }
 
 /*
@@ -72,19 +73,20 @@ struct request* get_request(struct request_queue* req_queue) {
 
 /* returns the number of pending requests in the queue */
 int get_pending_request_count(struct request_queue* req_queue) {
-    return 0;
+    return req_queue->num_requests;;
 }
 
 /* free any resources used by request queue */
 void delete_request_queue(struct request_queue* req_queue) {
+    free(req_queue);
 }
 
 /* close the queue as it is no longer accepting requests */
 void close_request_queue(struct request_queue* req_queue) {
-    free(req_queue);
+    //free(req_queue);
 }
 
 /* returns true if the request queue is closed */
 bool is_request_queue_closed(struct request_queue* req_queue) {
-    return false;
+    return req_queue->is_closed;
 }

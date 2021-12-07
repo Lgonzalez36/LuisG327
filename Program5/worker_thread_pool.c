@@ -43,13 +43,15 @@ void add_worker_thread(struct worker_thread_pool* pool) {
 
     // TODO next_thread_id should be in the thread_pool struct
     worker->thread_id = ++next_thread_id;
+    
+    worker->thd_params = params;
+    worker->total_processed = params->total_processed;
+
     pool->thread_list = worker;
     pool->num_threads += 1;
     pool->last_thread_id = worker->thread_id;
-    
-    params->worker_thd = worker->next;
-    
-    params->total_processed = 0;
+
+
     params->req_queue = pool->req_queue;
     params->thread_id = worker->thread_id;
     worker->thread = start_worker_thread(params);

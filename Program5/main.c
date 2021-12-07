@@ -43,38 +43,33 @@ int main(int argc, char* argv[]) {
 
     printf("Creating workers\n");
     for (int i=0; i < 4; i++){
-        printf("IN MAIN: creating THREAD [%d] ...\n", i+1);
+        //printf("IN MAIN: creating THREAD [%d] ...\n", i+1);
         add_worker_thread(thread_pool);
     }
 
     int number = 1;
     while(number < 201){
         if (number == 200 ) req_queue->is_closed = true;
-        add_request(req_queue, number);
-        number++;
+        add_request(req_queue, number++);
+        //nap_random();
     }
     
-    int i = 0;
-    //while ( i < 3 ) {
-        //if (thread_pool->thread_list == NULL) break;
-        int result_code1 = pthread_join(thread_pool->thread_list->thread, NULL);
-        int result_code2 = pthread_join(thread_pool->thread_list->next->thread, NULL);
-        int result_code3 = pthread_join(thread_pool->thread_list->next->next->thread, NULL);
-        int result_code4 = pthread_join(thread_pool->thread_list->next->next->next->thread, NULL);
-        //thread_pool->thread_list->thread = thread_pool->thread_list->next->thread;
+    int i = 1;
+    while ( i < 5 ) {
+        if (thread_pool->thread_list == NULL) break;
+        int result_code = pthread_join(thread_pool->thread_list->thread, NULL);
+        assert(!result_code);
+        printf("THREAD [%d] exiting.", i);
+        printf(" Processed %d request!\n",thread_pool->thread_list->thd_params->total_processed);
+        thread_pool->thread_list = thread_pool->thread_list->next;
         i++;
-        assert(!result_code1);
-        assert(!result_code2);
-        assert(!result_code3);
-        assert(!result_code4);
-        printf("IN MAIN: Thread %d has ended.\n", i);
-    //}
+    }
     
     close_request_queue(req_queue);
     delete_worker_thread_pool(thread_pool);
     delete_request_queue(req_queue);
-
     pthread_exit((void*)0);
+    exit(EXIT_SUCCESS);
 }
 
 static void nap_random() {
@@ -82,12 +77,12 @@ static void nap_random() {
     sleep_time.tv_sec = 0;
     // Generate a value between 0 and 1 second
     // 1,000,000,000 ns = 1000 milliseconds
-    sleep_time.tv_nsec = rand() % (1000000000L / 8L);
+    sleep_time.tv_nsec = rand() % (1000000000L / 4L);
 
     // 1,000,000 ns = 1 ms
+#ifdef DEBUG
     fprintf(stderr, "IN MAIN: sleeping for %ld nanoseconds (%ld milliseconds).\n",
             sleep_time.tv_nsec, sleep_time.tv_nsec / 1000000L);
-
+#endif
     nanosleep(&sleep_time, NULL);
-    exit(EXIT_SUCCESS);
 }

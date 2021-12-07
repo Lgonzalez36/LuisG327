@@ -56,16 +56,10 @@ static bool is_prime(int n) {
 void* do_work(void* thread_params) {
     bool queue_open = true;
     struct worker_thread_params* paramss = (struct worker_thread_params *)thread_params;
-
+    printf("THREAD [%d] starting\n", paramss->thread_id);
     while (queue_open) {
         pthread_mutex_lock(paramss->req_queue->mutex);
         while (paramss->req_queue->num_requests < 1) {
-            // if (paramss->req_queue->is_closed && paramss->req_queue->num_requests == 0) {
-            //     printf("QUEUE CLEARED:\n");
-            //     queue_open = false;
-            //     print_thread_data(th1, th2, th3);
-            //     break;
-            // }  
             //printf("WAITING:\tTASK [%d]\n", paramss->req_queue->num_requests);
             //sleep(1);
             pthread_cond_wait(paramss->req_queue->cond_var, paramss->req_queue->mutex);
@@ -73,24 +67,16 @@ void* do_work(void* thread_params) {
         }
         
         struct request* get_a_request = get_request(paramss->req_queue);
-        if (paramss->thread_id == 1) paramss->total_processed++;
-        if (paramss->thread_id == 2) paramss->total_processed++;
-        if (paramss->thread_id == 3) paramss->total_processed++;
-        if (paramss->thread_id == 4) paramss->total_processed++;
+
+        paramss->total_processed++;
+        
         //process_request(get_a_request, paramss->thread_id);
         pthread_mutex_unlock(paramss->req_queue->mutex);
         process_request(get_a_request, paramss->thread_id);
         if (paramss->req_queue->is_closed && paramss->req_queue->num_requests == 0) {
             queue_open = false;
-            // print_thread_data( paramss->thread_id,th1, th2, th3, th4);
-            sleep(1);
             break;
         }  
     }
-    
-    if (paramss->thread_id == 1) printf("THREAD [%d] exiting. Processed: %d request!\t\n", paramss->thread_id, paramss->total_processed);
-    if (paramss->thread_id == 2) printf("THREAD [%d] exiting. Processed: %d request!\t\n", paramss->thread_id, paramss->total_processed);
-    if (paramss->thread_id == 3) printf("THREAD [%d] exiting. Processed: %d request!\t\n", paramss->thread_id, paramss->total_processed);
-    if (paramss->thread_id == 4) printf("THREAD [%d] exiting. Processed: %d request!\t\n", paramss->thread_id, paramss->total_processed);
     return NULL;
 }

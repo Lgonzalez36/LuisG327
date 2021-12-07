@@ -39,8 +39,8 @@ extern void add_request(struct request_queue* req_queue, int request_num);
  */
 extern struct request* get_request(struct request_queue* req_queue);
 
-/* returns the number of pending requests in the queue */
-extern int get_pending_request_count(struct request_queue* req_queue);
+/* returns the number of pending requests in the queue 
+extern int get_pending_request_count(struct request_queue* req_queue);*/
 
 /* free any resources used by request queue */
 extern void delete_request_queue(struct request_queue* req_queue);
