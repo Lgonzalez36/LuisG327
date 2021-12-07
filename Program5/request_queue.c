@@ -4,7 +4,7 @@
 
 struct request_queue* create_request_queue(pthread_mutex_t* p_mutex, pthread_cond_t* p_cond_var) {
     struct request_queue* req_queue = malloc(sizeof(struct request_queue));
-    if (req_queue ==  NULL){
+    if (req_queue ==  NULL) {
         handle_error("Create_request_queue");
     }
     req_queue->mutex = p_mutex;
@@ -13,6 +13,7 @@ struct request_queue* create_request_queue(pthread_mutex_t* p_mutex, pthread_con
     req_queue->num_requests = 0;
     req_queue->request_list = NULL;
     req_queue->last_request = NULL;
+    req_queue->max_in_queue = 20;
     return req_queue;
 }
 
@@ -29,7 +30,7 @@ void add_request(struct request_queue* req_queue, int request_num) {
 
     a_request->number = request_num;
     a_request->next = NULL;
-    if (request_num == 1){
+    if (request_num == 1) {
         req_queue->request_list = a_request;
         req_queue->last_request = a_request;
         req_queue->num_requests = 1;
@@ -53,9 +54,9 @@ void add_request(struct request_queue* req_queue, int request_num) {
  */
 struct request* get_request(struct request_queue* req_queue) {
     struct request* get_a_request = (struct request*)malloc(sizeof(struct request));
-    while (1) {
+    do {
         if (req_queue->num_requests == 0) {
-            //printf("WAITING:\tTASK [%d]\n", get_a_request->number);
+            printf("WAITING:\tTASK [%d]\n", get_a_request->number);
             sleep(1);
         }
         if (req_queue->num_requests > 0) {
@@ -68,22 +69,26 @@ struct request* get_request(struct request_queue* req_queue) {
             //printf("TASK   [%d]:\t\t\t Removed from the queue\n", get_a_request->number);
             return get_a_request;            
         }
-    }
+    } while (1);
 }
 
 /* returns the number of pending requests in the queue */
 int get_pending_request_count(struct request_queue* req_queue) {
-    return req_queue->num_requests;;
+    return req_queue->num_requests;
 }
 
 /* free any resources used by request queue */
 void delete_request_queue(struct request_queue* req_queue) {
+    if (req_queue->last_request) 
+        free(req_queue->last_request);
+    if (req_queue->request_list) 
+        free(req_queue->request_list);
     free(req_queue);
 }
 
 /* close the queue as it is no longer accepting requests */
 void close_request_queue(struct request_queue* req_queue) {
-    //free(req_queue);
+    req_queue->is_closed = true;
 }
 
 /* returns true if the request queue is closed */

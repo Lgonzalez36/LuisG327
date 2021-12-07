@@ -16,6 +16,7 @@ struct request_queue {
     struct request* request_list;  // request linked list
     struct request* last_request;  // last request in list
     int num_requests;              // number of requests in the queue
+    int max_in_queue;
     bool is_closed;  // true when queue no more requests will be generated
     pthread_mutex_t* mutex;    // queue's mutex
     pthread_cond_t* cond_var;  // queue's condition variable
@@ -39,8 +40,8 @@ extern void add_request(struct request_queue* req_queue, int request_num);
  */
 extern struct request* get_request(struct request_queue* req_queue);
 
-/* returns the number of pending requests in the queue 
-extern int get_pending_request_count(struct request_queue* req_queue);*/
+/* returns the number of pending requests in the queue */
+extern int get_pending_request_count(struct request_queue* req_queue);
 
 /* free any resources used by request queue */
 extern void delete_request_queue(struct request_queue* req_queue);

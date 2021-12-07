@@ -8,9 +8,8 @@
 #include <error.h>
 #include <unistd.h>
 
-static bool is_prime(int n);
+static bool is_prime(int n);                // add thread_id to the header and uncommet if you wish to print
 static void process_request(struct request* request, int thread_id);
-// static void print_thread_data(int id, int th1, int th2, int th3, int th4);
 
 /*
  * Processes one request.
@@ -54,29 +53,21 @@ static bool is_prime(int n) {
  * Exit the thread when the request queue is closed.
  */
 void* do_work(void* thread_params) {
-    bool queue_open = true;
     struct worker_thread_params* paramss = (struct worker_thread_params *)thread_params;
     printf("THREAD [%d] starting\n", paramss->thread_id);
-    while (queue_open) {
+    while (1) {
         pthread_mutex_lock(paramss->req_queue->mutex);
-        while (paramss->req_queue->num_requests < 1) {
+        while (paramss->req_queue->num_requests == 0 && !is_request_queue_closed(paramss->req_queue)) {
             //printf("WAITING:\tTASK [%d]\n", paramss->req_queue->num_requests);
-            //sleep(1);
             pthread_cond_wait(paramss->req_queue->cond_var, paramss->req_queue->mutex);
-            
         }
-        
         struct request* get_a_request = get_request(paramss->req_queue);
-
         paramss->total_processed++;
-        
-        //process_request(get_a_request, paramss->thread_id);
         pthread_mutex_unlock(paramss->req_queue->mutex);
-        process_request(get_a_request, paramss->thread_id);
-        if (paramss->req_queue->is_closed && paramss->req_queue->num_requests == 0) {
-            queue_open = false;
+        process_request(get_a_request, paramss->thread_id); // add this to printparamss->thread_id
+        if (is_request_queue_closed(paramss->req_queue) && get_pending_request_count(paramss->req_queue) == 0) {
             break;
         }  
     }
-    return NULL;
+    pthread_exit((void *)0);
 }

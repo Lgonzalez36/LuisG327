@@ -31,8 +31,7 @@ struct worker_thread_pool {
  * Creates a worker thread pool with the given mutex,
  * condition variable and request queue.
  */
-extern struct worker_thread_pool* create_worker_thread_pool(
-    struct request_queue* req_queue);
+extern struct worker_thread_pool* create_worker_thread_pool(struct request_queue* req_queue);
 
 /* Adds a new worker thread to thread pool */
 extern void add_worker_thread(struct worker_thread_pool* pool);

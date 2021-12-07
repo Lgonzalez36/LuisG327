@@ -21,48 +21,33 @@ int main(int argc, char* argv[]) {
 
     // seed random number to vary results between program executions
     srand(time(0));
-
-    if (pthread_condattr_init(&condattr)){
-        handle_error("pthread_condattr_init");
-        // perror("pthread_cond_init");
-        // exit(EXIT_FAILURE);
-    }
-    if (pthread_cond_init(&req_cond, &condattr)){
-        handle_error("thread_cond");
-        // perror("pthread_cond");
-        // exit(EXIT_FAILURE);
-    }
-
+    if (pthread_condattr_init(&condattr)) handle_error("pthread_condattr_init");
+    if (pthread_cond_init(&req_cond, &condattr)) handle_error("thread_cond");
     pthread_condattr_destroy(&condattr);
 
-    struct request_queue* req_queue = 
-        create_request_queue(&req_mutex, &req_cond);
-
-    struct worker_thread_pool* thread_pool =
-        create_worker_thread_pool(req_queue);
+    struct request_queue* req_queue = create_request_queue(&req_mutex, &req_cond);
+    struct worker_thread_pool* thread_pool = create_worker_thread_pool(req_queue);
 
     printf("Creating workers\n");
-    for (int i=0; i < 4; i++){
-        //printf("IN MAIN: creating THREAD [%d] ...\n", i+1);
+    for (int i=0; i < 4; i++) {
         add_worker_thread(thread_pool);
     }
 
-    int number = 1;
-    while(number < 201){
-        if (number == 200 ) req_queue->is_closed = true;
-        add_request(req_queue, number++);
-        //nap_random();
+    int task = 1;
+    int reqest_total = 201;
+    while(task < (reqest_total)) {
+        if (task == (reqest_total -1)) req_queue->is_closed = true;
+        add_request(req_queue, task++);
+        if (req_queue->num_requests == 0) 
+            nap_random();
     }
     
-    int i = 1;
-    while ( i < 5 ) {
+    for (int i = 1; i < 5; i++) {
         if (thread_pool->thread_list == NULL) break;
         int result_code = pthread_join(thread_pool->thread_list->thread, NULL);
         assert(!result_code);
-        printf("THREAD [%d] exiting.", i);
-        printf(" Processed %d request!\n",thread_pool->thread_list->thd_params->total_processed);
+        printf("THREAD [%d] exiting. Processed %d request!\n", i, thread_pool->thread_list->thd_params->total_processed);
         thread_pool->thread_list = thread_pool->thread_list->next;
-        i++;
     }
     
     close_request_queue(req_queue);
@@ -73,11 +58,12 @@ int main(int argc, char* argv[]) {
 }
 
 static void nap_random() {
+    printf("NAPPING:\n");
     struct timespec sleep_time;
     sleep_time.tv_sec = 0;
     // Generate a value between 0 and 1 second
     // 1,000,000,000 ns = 1000 milliseconds
-    sleep_time.tv_nsec = rand() % (1000000000L / 4L);
+    sleep_time.tv_nsec = rand() % (1000000000L / 6L);
 
     // 1,000,000 ns = 1 ms
 #ifdef DEBUG

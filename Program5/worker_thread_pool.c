@@ -26,31 +26,24 @@ struct worker_thread_pool* create_worker_thread_pool(struct request_queue* req_q
 /* Adds a new worker thread to thread pool */
 void add_worker_thread(struct worker_thread_pool* pool) {
     struct worker_thread_params* params = malloc(sizeof(struct worker_thread_params));
-    if (!params) {
+    if (!params)
         handle_error("add_worker_thread:malloc:params");
-        // perror("add_worker_thread:malloc:params");
-        // exit(EXIT_FAILURE);
-    }
-    struct worker_thread* worker = malloc(sizeof(struct worker_thread));
-    if (!worker) {
-        handle_error("add_worker_thread:malloc:worker");
-        // perror("add_worker_thread:malloc:worker");
-        // exit(EXIT_FAILURE);    
 
-    }
+    struct worker_thread* worker = malloc(sizeof(struct worker_thread));
+    if (!worker)
+        handle_error("add_worker_thread:malloc:worker");
+
     struct worker_thread* new_next = pool->thread_list;
     worker->next = new_next;
 
     // TODO next_thread_id should be in the thread_pool struct
     worker->thread_id = ++next_thread_id;
-    
     worker->thd_params = params;
     worker->total_processed = params->total_processed;
 
     pool->thread_list = worker;
     pool->num_threads += 1;
     pool->last_thread_id = worker->thread_id;
-
 
     params->req_queue = pool->req_queue;
     params->thread_id = worker->thread_id;
@@ -70,17 +63,17 @@ static pthread_t start_worker_thread(struct worker_thread_params* params){
     return thread;
 }
 
-/* Removes the first worker thread from the thread pool */
-void remove_worker_thread(struct worker_thread_pool* pool) {
-
-}
-
-/* Gets current count of worker threads in thread pool */
-int get_worker_thread_count(struct worker_thread_pool* pool) {
-    return 0;
-}
-
 /* Performs resource clean up and cancel all worker threads. */
 void delete_worker_thread_pool(struct worker_thread_pool* pool) {
+    while (pool->thread_list != NULL) {
+        if (pool->thread_list) {
+            free(pool->thread_list->thd_params);
+            pool->thread_list = pool->thread_list->next;
+        }
+    }
+    if (pool->last_thread) 
+        free(pool->last_thread);
+    if (pool->thread_list) 
+        free(pool->thread_list);
     free(pool);
 }
